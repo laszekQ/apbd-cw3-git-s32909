@@ -1,4 +1,5 @@
 using LinqConsoleLab.EN.Data;
+using LinqConsoleLab.EN.Models;
 
 namespace LinqConsoleLab.EN.Exercises;
 
@@ -48,7 +49,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task03_StudentsSortedAlphabetically()
     {
-        throw NotImplemented(nameof(Task03_StudentsSortedAlphabetically));
+        return UniversityData.Students.
+            OrderBy(stud => stud.LastName).
+            ThenBy(stud => stud.FirstName).
+            Select(stud =>
+            $"{stud.IndexNumber} {stud.LastName} {stud.FirstName} ");
     }
 
     /// <summary>
@@ -63,7 +68,15 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task04_FirstAnalyticsCourse()
     {
-        throw NotImplemented(nameof(Task04_FirstAnalyticsCourse));
+        var course = UniversityData.Courses
+            .FirstOrDefault(c => c.Category.Equals("Analytics"));
+
+        return new[]
+        {
+            course != null ? 
+                $"{course.Title} {course.StartDate:yyyy-MM-dd}" 
+                : "Course not found"
+        };
     }
 
     /// <summary>
@@ -80,7 +93,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task05_IsThereAnyInactiveEnrollment()
     {
-        throw NotImplemented(nameof(Task05_IsThereAnyInactiveEnrollment));
+        var inactive = UniversityData.Enrollments.FirstOrDefault(e => !e.IsActive);
+        return new[]
+        {
+            inactive != null ? "Yes" : "No"
+        };
     }
 
     /// <summary>
