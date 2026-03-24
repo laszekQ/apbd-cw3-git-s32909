@@ -118,7 +118,6 @@ public sealed class LinqExercises
         {
             lecturers == departments ? "Yes" : "No"
         };
-        throw NotImplemented(nameof(Task06_DoAllLecturersHaveDepartment));
     }
 
     /// <summary>
@@ -132,7 +131,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task07_CountActiveEnrollments()
     {
-        throw NotImplemented(nameof(Task07_CountActiveEnrollments));
+        return new[] {UniversityData.Enrollments.Distinct().Count().ToString()};
     }
 
     /// <summary>
@@ -146,7 +145,10 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task08_DistinctStudentCities()
     {
-        throw NotImplemented(nameof(Task08_DistinctStudentCities));
+        return UniversityData.Students.
+            Select(stud => stud.City)
+            .Distinct()
+            .OrderBy(city => city);
     }
 
     /// <summary>
