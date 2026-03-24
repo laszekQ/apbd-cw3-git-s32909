@@ -16,11 +16,9 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task01_StudentsFromWarsaw()
     {
-        var allStuds = UniversityData.Students;
-        var output = from stud in allStuds
-                                        where stud.City.Equals("Warsaw")
-                                        select (stud.IndexNumber + " " +  stud.FirstName + " " + stud.LastName + " " + stud.City);
-        return output;
+        return UniversityData.Students.
+            Where(stud => stud.City.Equals("Warsaw")).
+            Select(stud => $"{stud.IndexNumber} {stud.FirstName} {stud.LastName} {stud.City}");
     }
 
     /// <summary>
@@ -34,7 +32,8 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task02_StudentEmailAddresses()
     {
-        throw NotImplemented(nameof(Task02_StudentEmailAddresses));
+        return UniversityData.Students.
+                Select(stud => stud.Email);
     }
 
     /// <summary>
