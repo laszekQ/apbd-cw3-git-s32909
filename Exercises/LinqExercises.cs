@@ -93,7 +93,7 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task05_IsThereAnyInactiveEnrollment()
     {
-        var inactive = UniversityData.Enrollments.FirstOrDefault(e => !e.IsActive);
+        var inactive = UniversityData.Enrollments.Any(e => !e.IsActive);
         return new[]
         {
             inactive != null ? "Yes" : "No"
@@ -112,6 +112,12 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task06_DoAllLecturersHaveDepartment()
     {
+        var lecturers = UniversityData.Lecturers.Count;
+        var departments = UniversityData.Lecturers.Count(l => l.Department != string.Empty);
+        return new[]
+        {
+            lecturers == departments ? "Yes" : "No"
+        };
         throw NotImplemented(nameof(Task06_DoAllLecturersHaveDepartment));
     }
 
