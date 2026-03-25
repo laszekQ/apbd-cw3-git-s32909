@@ -73,7 +73,7 @@ public sealed class LinqExercises
 
         return new[]
         {
-            course != null ? 
+                course != null ? 
                 $"{course.Title} {course.StartDate:yyyy-MM-dd}" 
                 : "Course not found"
         };
@@ -96,7 +96,7 @@ public sealed class LinqExercises
         var inactive = UniversityData.Enrollments.Any(e => !e.IsActive);
         return new[]
         {
-            inactive != null ? "Yes" : "No"
+            inactive ? "Yes" : "No"
         };
     }
 
@@ -163,7 +163,10 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task09_ThreeNewestEnrollments()
     {
-        throw NotImplemented(nameof(Task09_ThreeNewestEnrollments));
+        return UniversityData.Enrollments
+            .OrderByDescending(enr => enr.EnrollmentDate)
+            .Take(3)
+            .Select(enr => $"{enr.EnrollmentDate.ToString("yyyy-MM-dd")} {enr.StudentId} {enr.CourseId}");
     }
 
     /// <summary>
@@ -179,7 +182,11 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task10_SecondPageOfCourses()
     {
-        throw NotImplemented(nameof(Task10_SecondPageOfCourses));
+        return UniversityData.Courses
+            .OrderBy(course => course.Title)
+            .Skip(2)
+            .Take(2)
+            .Select(course => $"{course.Title} {course.Category}");
     }
 
     /// <summary>
@@ -194,7 +201,12 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Task11_JoinStudentsWithEnrollments()
     {
-        throw NotImplemented(nameof(Task11_JoinStudentsWithEnrollments));
+        return UniversityData.Students
+            .Join(
+                UniversityData.Enrollments,
+                student => student.Id,
+                enrollment => enrollment.StudentId,
+                (student, enrollment) => $"{student.FirstName} {student.LastName} {enrollment.EnrollmentDate:yyyy-MM-dd}");
     }
 
     /// <summary>
