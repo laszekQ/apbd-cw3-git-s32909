@@ -308,11 +308,11 @@ public sealed class LinqExercises
     public IEnumerable<string> Task16_HighestGradePerStudent()
     {
         return UniversityData.Students
-            .Join(UniversityData.Enrollments, s => s.Id, e => e.StudentId,
-                (s, e) => new {s, e.FinalGrade})
-            .Where(rec => rec.FinalGrade != null)
-            .GroupBy(rec => rec.s)
-            .Select(rec => $"{rec.Key.FirstName} {rec.Key.LastName} {rec.Max(r => r.FinalGrade)}");
+            .GroupJoin(UniversityData.Enrollments
+            .Where(e => e.FinalGrade != null), 
+                s => s.Id, e => e.StudentId,
+                (s, e) => $"{s.FirstName} {s.LastName} {e.Max(r => r.FinalGrade)}"
+            );
     }
 
     /// <summary>
@@ -330,7 +330,15 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge01_StudentsWithMoreThanOneActiveCourse()
     {
-        throw NotImplemented(nameof(Challenge01_StudentsWithMoreThanOneActiveCourse));
+        return UniversityData.Students
+            .GroupJoin( UniversityData.Enrollments
+                .Where(e => e.IsActive),
+                s => s.Id, e => e.StudentId,
+                (s, activeEnrollments) => new {
+                    s.FirstName, s.LastName, ActiveCount = activeEnrollments.Count() 
+                })
+            .Where(rec => rec.ActiveCount > 1)
+            .Select(rec => $"{rec.FirstName} {rec.LastName} - {rec.ActiveCount}");
     }
 
     /// <summary>
@@ -347,7 +355,15 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge02_AprilCoursesWithoutFinalGrades()
     {
-        throw NotImplemented(nameof(Challenge02_AprilCoursesWithoutFinalGrades));
+        return UniversityData.Courses
+            .Where(c => c.StartDate.Month == 4 && c.StartDate.Year == 2026)
+            .GroupJoin(UniversityData.Enrollments, c => c.Id, e => e.CourseId,
+                (c, e) => new {
+                    c.Title, noGrade = e.All(en => en.FinalGrade == null)
+                })
+            .Where(arg => arg.noGrade)
+            .Select(arg => $"{arg.Title}"
+            );
     }
 
     /// <summary>
@@ -365,7 +381,17 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge03_LecturersAndAverageGradeAcrossTheirCourses()
     {
-        throw NotImplemented(nameof(Challenge03_LecturersAndAverageGradeAcrossTheirCourses));
+        return UniversityData.Lecturers
+            .Join(UniversityData.Courses, l => l.Id, c => c.LecturerId,
+                (l, c) => new { l, c })
+            .Join(UniversityData.Enrollments
+                .Where(e => e.FinalGrade != null),
+                lc => lc.c.Id, e => e.CourseId,
+                (lc, e) => 
+                new {lc.l, e.FinalGrade})
+            .GroupBy(lectGrade => lectGrade.l)
+            .Select(lectGrade => 
+                $"{lectGrade.Key.FirstName} {lectGrade.Key.LastName} {lectGrade.Average(rec => rec.FinalGrade)}");
     }
 
     /// <summary>
@@ -383,7 +409,15 @@ public sealed class LinqExercises
     /// </summary>
     public IEnumerable<string> Challenge04_CitiesAndActiveEnrollmentCounts()
     {
-        throw NotImplemented(nameof(Challenge04_CitiesAndActiveEnrollmentCounts));
+        return UniversityData.Students
+            .Join(UniversityData.Enrollments
+                .Where(e => e.IsActive),
+                s => s.Id, e => e.StudentId,
+                (s, e) => new {s.City})
+            .GroupBy(rec => rec.City)
+            .Select(rec =>  new {rec.Key, Count = rec.Count()})
+            .OrderByDescending(rec => rec.Count)
+            .Select(rec => $"{rec.Key} {rec.Count}");
     }
 
     private static NotImplementedException NotImplemented(string methodName)
